@@ -1,4 +1,4 @@
-### Updated `README.md` for JDK Version Switcher
+### JDK Version Switcher
 
 ---
 

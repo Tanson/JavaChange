@@ -127,7 +127,7 @@ func main() {
 	// 设置 JAVA_HOME
 	err = setSystemEnv(ENVIRONMENT_VARIABLE_TO_SET, selected.Path)
 	if err != nil {
-		log.Printf("设置 %s 时出错: %v\n", ENVIRONMENT_VARIABLE_TO_SET, err)
+		log.Printf("请确认是否是管理员启动，设置 %s 时出错: %v\n", ENVIRONMENT_VARIABLE_TO_SET, err)
 	} else {
 		fmt.Printf("成功设置 %s 为 %s\n", ENVIRONMENT_VARIABLE_TO_SET, selected.Path)
 	}
@@ -136,7 +136,7 @@ func main() {
 	newPATH := filepath.Join(selected.Path, "bin") + ";" + newPath
 	err = setSystemEnv("PATH", newPATH)
 	if err != nil {
-		log.Printf("更新 PATH 时出错: %v\n", err)
+		log.Printf("请确认是否是管理员启动，更新 PATH 时出错: %v\n", err)
 	} else {
 		fmt.Println("成功更新 PATH。")
 	}

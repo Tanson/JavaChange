@@ -1,4 +1,4 @@
-### README 文件示例
+### JDK Version Switcher
 
 ---
 

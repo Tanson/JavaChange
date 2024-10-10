@@ -1,84 +1,105 @@
-### 软件操作说明和工作原理
+### README 文件示例
 
-#### 软件操作说明
+---
 
-该软件旨在帮助用户快速切换和管理系统中的多个 JDK（Java 开发工具包）版本。用户可以通过该程序选择不同版本的 JDK，并自动更新系统的 `JAVA_HOME` 环境变量及 `PATH` 路径，确保系统使用指定版本的 JDK。
+# JDK Version Switcher
 
-#### 使用步骤：
+这是一个用 Go 编写的工具，用于在 Windows 系统上快速切换不同版本的 JDK（Java Development Kit）。该工具会自动检测通过标准方式安装的 JDK 版本，并允许用户选择需要设置为 `JAVA_HOME` 和 `PATH` 环境变量的 JDK 版本。
 
-1. **运行软件**：
-    - 请确保以管理员权限运行该程序，因为程序需要修改系统环境变量。
-    - 双击或在命令行中执行程序启动。
+## 特性
 
-2. **查找已安装的 JDK**：
-    - 程序会自动从系统注册表中查找通过正常方式安装的 JDK 版本，并列出它们的路径和版本号。
-    - 系统环境变量中手动添加的 JDK 版本也会被列出。
+- 自动从 Windows 注册表读取安装的 JDK 版本（32 位和 64 位）。
+- 支持通过环境变量 (`JAVA_SDK_{version}`) 手动添加 JDK 版本。
+- 修改系统级别的 `JAVA_HOME` 和 `PATH` 环境变量。
+- 终端输出带颜色的提示信息，方便识别当前 JDK 版本（需要支持 ANSI 的终端）。
+  
+## 环境要求
 
-3. **选择 JDK 版本**：
-    - 程序会显示所有检测到的 JDK 版本，并为每个版本分配一个编号。
-    - 通过输入编号选择要使用的 JDK 版本，输入 `0` 则退出程序。
+- **操作系统**：Windows 10 或更新版本
+- **依赖**：需要安装 Go 语言开发环境
+- **权限**：程序需要管理员权限以修改系统环境变量
 
-4. **更新 JAVA_HOME 和 PATH**：
-    - 选定版本后，程序会将该版本的安装路径设置为 `JAVA_HOME` 环境变量。
-    - 程序还会将选定 JDK 的 `bin` 目录添加到 `PATH` 系统环境变量的首位，以便命令行使用该 JDK 版本。
+## 安装步骤
 
-5. **结束**：
-    - 程序显示“操作成功”提示后，按任意键退出。
-    - 更改后可能需要重新启动终端或重新登录系统，以使变更生效。
+1. **克隆项目代码**：
 
-#### 工作原理
+    ```bash
+    git clone https://github.com/your-username/jdk-switcher.git
+    ```
 
-该程序主要依靠以下几个步骤和技术来实现切换 JDK 版本的功能：
+2. **进入项目目录**：
 
-1. **读取注册表中的 JDK 信息**：
-    - 程序首先通过访问 Windows 注册表，定位 `SOFTWARE\JavaSoft\JDK` 和 `SOFTWARE\JavaSoft\Java Development Kit` 这两个注册表项。 
-    - 通过 `CurrentVersion` 获取当前的 JDK 版本，并从子键中读取每个版本的 `JavaHome` 路径。
-    - 程序分别访问 32 位和 64 位视图的注册表，确保能够找到所有 JDK 版本（包括旧版和通过不同架构安装的版本）。
+    ```bash
+    cd jdk-switcher
+    ```
 
-2. **读取系统环境变量**：
-    - 除了注册表中已安装的 JDK，程序还会从系统环境变量中查找以 `JAVA_SDK_` 为前缀的变量。这些变量对应的是手动添加的 JDK 路径。
-    - 程序通过 `Environment.GetEnvironmentVariables()` 获取所有环境变量，并筛选出符合条件的变量名。
+3. **安装依赖**：
 
-3. **展示 JDK 版本**：
-    - 程序汇总从注册表和环境变量中收集到的所有 JDK 版本，并在终端中展示这些版本的详细信息，包括 JDK 安装路径和来源（注册表或环境变量）。
+    项目依赖 `golang.org/x/sys/windows/registry` 包。如果要使用带颜色输出的版本，还需要安装 `github.com/fatih/color` 包。
 
-4. **更新 JAVA_HOME 和 PATH**：
-    - 用户选择 JDK 版本后，程序会通过 `Environment.SetEnvironmentVariable()` 方法修改系统的 `JAVA_HOME` 变量。
-    - 程序会检查 `PATH` 环境变量，移除之前的 `JAVA_HOME\bin` 路径，确保新选择的 JDK 路径被添加到 `PATH` 的首位，从而使新 JDK 生效。
-    
-5. **持久化设置**：
-    - 由于程序使用 `Environment.SetEnvironmentVariable` 并指定 `EnvironmentVariableTarget.Machine`，这些更改会永久应用于系统的环境变量中。
-    - 用户无需每次都手动修改环境变量，程序可以自动管理和切换不同版本的 JDK。
+    使用以下命令安装依赖：
 
-#### 工作流程图：
+    ```bash
+    go get golang.org/x/sys/windows/registry
+    go get github.com/fatih/color
+    ```
 
-1. **启动程序**
-    - 检查注册表和环境变量。
-    
-2. **读取注册表中的 JDK 信息**
-    - 从 `SOFTWARE\JavaSoft` 中获取 JDK 版本。
-    
-3. **读取系统环境变量**
-    - 查找以 `JAVA_SDK_` 为前缀的手动添加的 JDK。
-    
-4. **列出可用的 JDK 版本**
-    - 终端显示检测到的 JDK 版本供用户选择。
-    
-5. **用户选择 JDK 版本**
-    - 用户输入数字编号，选择需要使用的 JDK 版本。
-    
-6. **更新 JAVA_HOME 和 PATH**
-    - 设置 `JAVA_HOME` 为选中的 JDK 安装路径，并更新 `PATH` 环境变量。
+4. **编译项目**：
 
-7. **结束并提示**
-    - 显示更改成功的消息，并提示用户按任意键退出程序。
+    运行以下命令编译项目：
 
-#### 注意事项：
+    ```bash
+    go build -o jdk-switcher main.go
+    ```
 
-1. **管理员权限**：由于程序需要修改系统环境变量，建议在管理员模式下运行。
-2. **环境变量生效**：在修改环境变量后，用户需要重新启动命令行或重启计算机以确保更改生效。
-3. **JDK 安装路径**：该程序只能检测通过标准安装方式或系统环境变量添加的 JDK。如果 JDK 没有正确设置在注册表中，可能无法检测到。
+5. **以管理员权限运行**：
 
-#### 总结：
+    由于该工具需要修改系统环境变量，请确保以管理员权限运行。
 
-该程序通过读取 Windows 注册表和环境变量中的 JDK 信息，帮助用户快速切换和设置不同版本的 JDK 环境，尤其适合需要频繁切换 JDK 版本的开发者使用。
+    ```bash
+    ./jdk-switcher
+    ```
+
+## 使用方法
+
+1. 启动程序后，它会自动检测系统中安装的 JDK 版本，并显示一个菜单供用户选择。
+
+    ```bash
+    **************************************************
+    1. The software automatically searches for JDK versions installed via standard methods.
+    2. To add manually, create system environment variables for all JDK versions with names like: JAVA_SDK_{version}
+    3. Add `%JAVA_HOME%\bin` at the top of the `PATH` system environment variable.
+    **************************************************
+
+    Current JDK Version: C:\Program Files\Java\jdk1.8.0_271
+
+    Please select a JDK version:
+    0    : Exit
+    1    : (x64) 1.8.0_271   Path: C:\Program Files\Java\jdk1.8.0_271
+    2    : (x64) 11.0.9.1    Path: C:\Program Files\Java\jdk-11.0.9.1
+    3    : (env) JAVA_SDK_1.8    Path: C:\Java\jdk1.8
+    ```
+
+2. 输入您想要切换到的 JDK 版本编号，程序会自动更新 `JAVA_HOME` 和 `PATH`。
+
+3. 如果需要手动添加 JDK 版本，可以在系统环境变量中创建类似 `JAVA_SDK_{version}` 的变量名，并将其路径指向所需的 JDK 安装目录。
+
+4. 选择完成后，程序将更新环境变量，您可能需要重新启动终端或重新登录系统以使更改生效。
+
+## 终端支持
+
+该工具的输出包含颜色信息，确保您的终端支持 ANSI 转义码。如果您使用的是旧版 Windows 命令提示符（CMD），建议切换到 Windows Terminal 或使用支持颜色输出的终端。
+
+## 注意事项
+
+1. **管理员权限**：由于工具需要修改系统级别的环境变量，因此请确保以管理员权限运行程序。
+2. **重启终端**：更新 `JAVA_HOME` 和 `PATH` 后，某些终端可能不会立即反映更改，建议重启终端或重新登录系统。
+3. **注册表访问**：该工具会从注册表中读取已安装的 JDK 信息，因此需要访问 Windows 注册表的权限。
+
+## 开发与贡献
+
+如有任何问题或建议，欢迎提交 Issue 或 Pull Request。
+
+## 许可证
+
+本项目采用 MIT 许可证，详细信息请参阅 [LICENSE](LICENSE) 文件。

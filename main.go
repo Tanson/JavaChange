@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -119,7 +121,7 @@ func main() {
 		return
 	}
 
-	selected := versionList[index]
+	selected := versionList[index-1]
 	fmt.Printf("使用 %s\n", selected.Path)
 
 	// 设置 JAVA_HOME
@@ -140,6 +142,9 @@ func main() {
 	}
 
 	fmt.Println("更改已成功应用。您可能需要重新启动终端或重新登录系统以使更改生效。")
+	fmt.Print("按回车键退出...")
+	bufio.NewReader(os.Stdin).ReadString('\n')
+
 }
 
 // printInstructions 打印指示信息
@@ -169,14 +174,14 @@ func readJDKRegistryKeys(hive registry.Key, access uint32, subKey string, machin
 	k, err := registry.OpenKey(hive, subKey, access)
 	if err != nil {
 		// 注册表键可能不存在，记录并继续
-		log.Printf("未找到注册表键: %s (%s)\n", subKey, machine)
+		// log.Printf("未找到注册表键: %s (%s)\n", subKey, machine)
 		return
 	}
 	defer k.Close()
 
 	names, err := k.ReadSubKeyNames(-1)
 	if err != nil {
-		log.Printf("读取子键时出错: %s (%s): %v\n", subKey, machine, err)
+		// log.Printf("读取子键时出错: %s (%s): %v\n", subKey, machine, err)
 		return
 	}
 

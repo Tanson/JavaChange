@@ -104,6 +104,8 @@ func main() {
 		},
 		Searcher: func(input string, index int) bool {
 			item := formatVersionList(versionList)[index]
+			fmt.Printf("%s \n", item)
+			fmt.Printf("%s \n", input)
 			return strings.Contains(strings.ToLower(item), strings.ToLower(input))
 		},
 	}
@@ -120,8 +122,9 @@ func main() {
 		fmt.Println("已退出程序。")
 		return
 	}
-
+	fmt.Println(index)
 	selected := versionList[index-1]
+	fmt.Printf("选择 %s \n", result)
 	fmt.Printf("使用 %s\n", selected.Path)
 
 	// 设置 JAVA_HOME
